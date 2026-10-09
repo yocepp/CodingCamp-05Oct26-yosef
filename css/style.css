@@ -298,3 +298,12 @@ body { transition: background 0.2s, color 0.2s; }
 @media (max-width: 640px) {
   .timer-form input[type="number"] { min-height: 44px; font-size: 16px; }
 }
+
+.todo-list { list-style: none; padding: 0; margin: 16px 0 0; }
+.todo-item { display: flex; align-items: center; gap: 12px; padding: 10px 0; border-bottom: 1px solid rgba(128, 128, 128, 0.2); }
+.todo-item .todo-text { flex: 1; word-break: break-word; }
+.todo-item.done .todo-text { text-decoration: line-through; opacity: 0.5; }
+.todo-edit-input { flex: 1; padding: 8px 12px; border: 1px solid rgba(128, 128, 128, 0.4); border-radius: 8px; font: inherit; background: transparent; color: inherit; }
+.todo-edit { background: none; border: none; cursor: pointer; font-size: 1rem; color: inherit; opacity: 0.6; }
+.todo-edit:hover { opacity: 1; }
+.empty[hidden] { display: none; }

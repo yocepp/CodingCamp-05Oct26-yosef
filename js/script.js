@@ -137,6 +137,133 @@ timerForm.addEventListener("submit", (e) => {
 timerMinutesInput.value = timerMinutes;
 renderTimer();
 
+/* ===== 3. To-Do List ===== */
+const TODO_KEY = "dashboard_todos";
+let todos = load(TODO_KEY, []);
+let editingId = null; // id task yang sedang diedit
+
+const todoForm = document.getElementById("todo-form");
+const todoInput = document.getElementById("todo-input");
+const todoList = document.getElementById("todo-list");
+const todoEmpty = document.getElementById("todo-empty");
+
+function renderTodos() {
+  todoList.innerHTML = "";
+  todoEmpty.hidden = todos.length > 0;
+
+  todos.forEach((todo) => {
+    const li = document.createElement("li");
+    li.className = "todo-item" + (todo.done ? " done" : "");
+
+    const checkbox = document.createElement("input");
+    checkbox.type = "checkbox";
+    checkbox.checked = todo.done;
+    checkbox.title = "Tandai selesai";
+    checkbox.addEventListener("change", () => toggleTodo(todo.id));
+    li.appendChild(checkbox);
+
+    if (editingId === todo.id) {
+      // Mode edit: tampilkan input + tombol Simpan/Batal
+      const editInput = document.createElement("input");
+      editInput.type = "text";
+      editInput.className = "todo-edit-input";
+      editInput.value = todo.text;
+      editInput.maxLength = 200;
+
+      const saveBtn = document.createElement("button");
+      saveBtn.type = "button";
+      saveBtn.className = "btn btn-primary";
+      saveBtn.textContent = "Simpan";
+
+      const cancelBtn = document.createElement("button");
+      cancelBtn.type = "button";
+      cancelBtn.className = "btn";
+      cancelBtn.textContent = "Batal";
+
+      const commit = () => saveEdit(todo.id, editInput.value);
+      saveBtn.addEventListener("click", commit);
+      cancelBtn.addEventListener("click", cancelEdit);
+      editInput.addEventListener("keydown", (e) => {
+        if (e.key === "Enter") commit();
+        if (e.key === "Escape") cancelEdit();
+      });
+
+      li.append(editInput, saveBtn, cancelBtn);
+      todoList.appendChild(li);
+      editInput.focus();
+      editInput.select();
+      return;
+    }
+
+    // Mode normal
+    const span = document.createElement("span");
+    span.className = "todo-text";
+    span.textContent = todo.text;
+
+    const editBtn = document.createElement("button");
+    editBtn.type = "button";
+    editBtn.className = "todo-edit";
+    editBtn.textContent = "✎";
+    editBtn.title = "Edit task";
+    editBtn.addEventListener("click", () => startEdit(todo.id));
+
+    const delBtn = document.createElement("button");
+    delBtn.type = "button";
+    delBtn.className = "link-del";
+    delBtn.textContent = "✕";
+    delBtn.title = "Hapus task";
+    delBtn.addEventListener("click", () => deleteTodo(todo.id));
+
+    li.append(span, editBtn, delBtn);
+    todoList.appendChild(li);
+  });
+}
+
+function persistTodos() {
+  save(TODO_KEY, todos);
+  renderTodos();
+}
+
+function toggleTodo(id) {
+  todos = todos.map((t) => (t.id === id ? { ...t, done: !t.done } : t));
+  persistTodos();
+}
+
+function deleteTodo(id) {
+  if (editingId === id) editingId = null;
+  todos = todos.filter((t) => t.id !== id);
+  persistTodos();
+}
+
+function startEdit(id) {
+  editingId = id;
+  renderTodos();
+}
+
+function cancelEdit() {
+  editingId = null;
+  renderTodos();
+}
+
+function saveEdit(id, newText) {
+  const text = newText.trim();
+  if (!text) return; // jangan simpan task kosong
+  todos = todos.map((t) => (t.id === id ? { ...t, text } : t));
+  editingId = null;
+  persistTodos();
+}
+
+todoForm.addEventListener("submit", (e) => {
+  e.preventDefault();
+  const text = todoInput.value.trim();
+  if (!text) return;
+  todos.push({ id: Date.now(), text, done: false });
+  persistTodos();
+  todoForm.reset();
+});
+
+renderTodos();
+
 /* ===== 4. Quick Links ===== */
 const LINKS_KEY = "dashboard_links";
 const defaultLinks = [
