@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Life Dashboard</title>
+  <link rel="stylesheet" href="css/style.css">
+  <script>
+    (function () {
+      try {
+        var t = localStorage.getItem("dashboard_theme");
+        if (!t) t = window.matchMedia("(prefers-color-scheme: dark)").matches ? "dark" : "light";
+        document.documentElement.setAttribute("data-theme", t);
+      } catch (e) {}
+    })();
+  </script>
+</head>
+<body>
+    <button id="theme-toggle" class="theme-toggle" aria-label="Ganti tema" title="Ganti tema">🌙</button>
+  <main class="container">
+
+    <!-- Greeting -->
+    <header class="card greeting">
+      <p id="date" class="date"></p>
+      <h1 id="time" class="time">00:00:00</h1>
+      <h2 id="greeting" class="greeting-text"></h2>
+
+      <button id="name-edit" class="name-edit" type="button">✎ Change Name</button>
+      <form id="name-form" class="name-form" hidden>
+        <input type="text" id="name-input" placeholder="Your name" maxlength="30">
+        <button type="submit" class="btn btn-primary">Simpan</button>
+        <button type="button" id="name-cancel" class="btn">Batal</button>
+      </form>
+    </header>
+
+    <div class="grid">
+
+      <!-- Focus Timer -->
+      <section class="card">
+        <h3>Focus Timer</h3>
+        <div id="timer-display" class="timer-display">25:00</div>
+        <div class="btn-group">
+          <button id="timer-start" class="btn btn-primary">Start</button>
+          <button id="timer-stop" class="btn">Stop</button>
+          <button id="timer-reset" class="btn">Reset</button>
+        </div>
+        <form id="timer-form" class="timer-form">
+          <label for="timer-minutes">Duration (minutes)</label>
+          <input type="number" id="timer-minutes" min="1" max="180" value="25" required>
+          <button type="submit" class="btn">Set</button>
+        </form>
+      </section>
+
+      <!-- Quick Links -->
+      <section class="card">
+        <h3>Quick Links</h3>
+        <div id="links-list" class="links-list"></div>
+        <form id="link-form" class="inline-form">
+          <input type="text" id="link-name" placeholder="Name" required>
+          <input type="url" id="link-url" placeholder="https://example.com" required>
+          <button type="submit" class="btn btn-primary">Add</button>
+        </form>
+      </section>
+
+    </div>
+
+    <!-- To-Do List -->
+    <section class="card">
+      <h3>To-Do List</h3>
+      <form id="todo-form" class="inline-form">
+        <input type="text" id="todo-input" placeholder="Add New Task..." required>
+        <button type="submit" class="btn btn-primary">Add</button>
+      </form>
+      <ul id="todo-list" class="todo-list"></ul>
+      <p id="todo-empty" class="empty">No assignments yet.</p>
+    </section>
+
+  </main>
+
+  <script src="js/script.js"></script>
+</body>
+</html>
